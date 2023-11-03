@@ -1,5 +1,4 @@
-interface IERC20Token {
-}
+pragma solidity ^0.8;
 
 contract SimpleMTCS { 
 
@@ -37,7 +36,7 @@ contract SimpleMTCS {
 	emit UploadedObligation(msg.sender, creditor, amount, memo);
     }
     
- 
+
     // At any time, we can settle an obligation, transferring native units.
     // This decreases the utilized credit
     event Settled(address creditor, address debtor, uint amt);
@@ -55,27 +54,32 @@ contract SimpleMTCS {
 
 	// Emit an event about this settle off
 	emit Settled(creditor, debtor, amt);
-    }
+    }    
 
-    
-
-    // Set credit limits (these people are allowed to invoice you)
-    // Mapping is from creditor to the debtor.
-    mapping ( address => mapping ( address => uint )) public creditLimits;
-    function setAcceptance(address debtor, uint limit) public {
-	if (!isUser(msg.sender)) addUser(msg.sender);
-	if (!isUser(debtor)) addUser(debtor);
-	// This sets the credit limit
-	creditLimits[msg.sender][debtor] = limit;
-    }
-    
-
-    function validateCycle(address[] memory froms, address[] memory tos, uint[] memory amts) public view {
+    function validateCycle(address[] memory path, uint amount) public view {
 	// Check this forms a cycle
-	// Check the cycle satisfies constraints
+	require(path[0] == path[path.length-1]);
+	// For each item, we must be sure the utilization decreases
+	for (uint i = 0; i < path.length-1; i++) {
+	    address from = path[i];
+	    address to = path[i+1];
+	    // Transfer from/to must reduce an obligation
+	    require(amount <= utilization[to][from], "clearing too much");
+	}
     }
-    function applyCycle(address[] memory froms, address[] memory tos, uint[] memory amts) public {
-	validateCycle(froms, tos, amts);
+
+    event CycleSetoff(uint count, uint volumeCleared);
+    function applyCycle(address[] memory path, uint amount) public {
+	validateCycle(path, amount);
 	// Apply the cycle
+	uint count = path.length-1;
+	uint volumeCleared = 0;
+	for (uint i = 0; i < path.length-1; i++) {
+	    address from = path[i];
+	    address to = path[i+1];
+	    utilization[to][from] -= amount;
+	    volumeCleared += amount;
+	}
+	emit CycleSetoff(count, volumeCleared);
     }
 }
