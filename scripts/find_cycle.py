@@ -26,16 +26,17 @@ def find_flow(g):
 
     # Every edge in the residual graph is part of a cycle
     cycles = list(nx.simple_cycles(resid))
+    print(cycles)
     wcycles = []
     for cycle in cycles:
-        amt = 1e10
+        amt = 1e20
         for u,v in zip(cycle,cycle[1:]+cycle[:1]):
             amt = min(amt, resid.edges[u,v]['weight'])
         if amt > 0:
-            wcycles.append((amt, cycle))
+            wcycles.append((amt, cycle[::-1]))
     wcycles.sort(reverse=True)
-    for cycle in wcycles:
-        print(cycle)
+    for amt,cycle in wcycles:
+        print(f'[{",".join(cycle+cycle[:1])}]', amt)
 
 if __name__ == '__main__':
     from render_graph import graph
