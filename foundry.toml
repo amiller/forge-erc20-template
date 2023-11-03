@@ -1,5 +1,5 @@
 # Additional configuration and default values at https://github.com/gakonst/foundry/tree/master/config
-[default]
+[profile.default]
 
 # Sets the concrete solc version to use
 # This overrides the `auto_detect_solc` value
@@ -11,5 +11,5 @@ remappings = [
   "@openzeppelin=lib/openzeppelin-contracts/contracts/",
 ]
 
-[ci]
+[profile.ci]
 fuzz_runs = 2_000
