@@ -4,7 +4,7 @@ contract SimpleMTCS {
 
     // Upload obligations you intend to pay
     // Mapping[Creditor][Debtor]=>Balance
-    mapping ( address => mapping (address => uint)) utilization;
+    mapping ( address => mapping (address => uint)) public utilization;
     event UploadedObligation(address debtor, address creditor, uint amount, string memo);
     function uploadObligation(address creditor, uint amount, string calldata memo) public {
 	// I'm the debtor, I will pay the creditor this much.
