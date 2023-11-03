@@ -24,7 +24,7 @@ echo $PRIV_FROM $ADDR_TO $AMT
 
 # Pre-prepared contract
 # https://sepolia.etherscan.io/address/0x705ea078b2f82372247de2405305cae4192af444#code
-CONTRACT=0x705ea078b2f82372247de2405305cae4192af444
+CONTRACT=0x9cB05FA69B4D71f831b32f3DD87ECa0E93229515
 
 set -x
 cast send -c sepolia --private-key $PRIV_FROM $CONTRACT "uploadObligation(address,uint256,string)" $ADDR_TO $AMT "edge $INDEX"
