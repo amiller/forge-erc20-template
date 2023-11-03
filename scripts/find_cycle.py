@@ -37,3 +37,6 @@ def find_flow(g):
     for cycle in wcycles:
         print(cycle)
 
+if __name__ == '__main__':
+    from render_graph import graph
+    find_flow(graph)
