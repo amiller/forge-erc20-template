@@ -14,9 +14,13 @@ contract SimpleMTCS {
 	emit UploadedObligation(msg.sender, creditor, amount, memo);
     }
 
-    function validateCycle(address[] memory path, uint amount) public view {
+    function validateCycle(address[] memory path, uint amount) public view virtual {
 	// Check this forms a cycle
 	require(path[0] == path[path.length-1]);
+	
+	// TODO: FIXME: Check that except for start and stop, the same node
+	// never appears twice in the list!
+	
 	// For each item, we must be sure the utilization decreases
 	for (uint i = 0; i < path.length-1; i++) {
 	    address from = path[i];
@@ -27,7 +31,7 @@ contract SimpleMTCS {
     }
 
     event CycleSetoff(uint count, uint volumeCleared);
-    function applyCycle(address[] memory path, uint amount) public {
+    function applyCycle(address[] memory path, uint amount) public virtual {
 	validateCycle(path, amount);
 	// Apply the cycle
 	uint count = path.length-1;
